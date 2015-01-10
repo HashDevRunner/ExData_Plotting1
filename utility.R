@@ -10,7 +10,6 @@ downloadToDataDir <- function(url, dest) {
 }
 
 extractUciHarFile <- function(filePath) {
-#   fullFilePath <- fileJoin("exdata-data-household_power_consumption.zip", filePath)
   fullFilePath <- filePath
   unz(uciHarZipfile, fullFilePath)
 }
@@ -38,5 +37,11 @@ df <- read.csv(extractUciHarFile("household_power_consumption.txt"),
                na.strings = c("?"),
                nrows=2075259)
 
+#Convert to Date type
 df["Date"] = as.Date(strptime(df$Date, "%d/%m/%Y"))
+
+#Filter only needed dates
 df <- filter(df, Date >= "2007-02-01" & Date <= "2007-02-02")
+
+#Create a DateTime type
+df$Datetime <- as.POSIXct(paste(as.Date(df$Date), df$Time))
